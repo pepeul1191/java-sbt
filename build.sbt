@@ -10,3 +10,6 @@ lazy val root = (project in file(".")).
     name := "Hello",
     libraryDependencies += scalaTest % Test
   )
+
+javaSource in Compile := baseDirectory.value / "src"
+javaSource in Test := baseDirectory.value / "test-src"

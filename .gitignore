@@ -5,3 +5,6 @@ target
 /.project
 /.settings
 /RUNNING_PID
+.cache-main
+.cache-test
+*.class
