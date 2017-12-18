@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>$title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="$css">
+    <script type="text/javascript">
+        var BASE_URL = '$constantes.get("BASE_URL")';
+        var STATICS_URL  = '$constantes.get("STATIC_URL")';
+        var SUBMODULOS_JSON = JSON.parse('$submenu');
+        var DATA = "$data"; 
+    </script>
+</head>
+<body>
+	<!-- Inicio Modal -->
+    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modal-container"  id="btnModal" style="display: none" >Launch demo modal</button>
+    <div class="modal fade" id="modal-container" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"></div>
+    <!-- Fin Modal -->
+	<nav class="navbar navbar-inverse">
+            <div class="container">
+              <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">
+                <span>Mantenimiento : Accesos</span>
+                </a>
+              </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="{% raw %}{{BASE_URL}}{% endraw %}#/login">Salir</a></li>
+                    </ul>
+                </div>
+              <!--/.nav-collapse -->
+            </div><!--/.container-fluid -->
+   </nav>
+   <div class="container" id="body-workspace"></div>
+   <script id="mantenimiento-template" type="text/x-handlebars-template">
+   		<div class="col-md-3 sidebar" id="menu-izq">
+			<div class="panel panel-default">
+                <ul class="list-group">
+                    {{> menu_submodulos}}
+                </ul>
+            </div>
+		</div>
+   		<div class="col-md-9" id="workspace">
+   			{{> yield}}
+   		</div>
+   </script>
+   <script id="menu-submodulos" type="text/x-handlebars-template">
+        {{{menuSubmodulos}}}
+    </script>
+   <script id="yield" type="text/x-handlebars-template">
+        #parse($partial)
+    </script>
+    <script type="text/javascript" src="$js"></script>
+</body>
+</html>

@@ -13,11 +13,15 @@ lazy val root = (project in file(".")).
 
 javaSource in Compile := baseDirectory.value / "src"
 javaSource in Test := baseDirectory.value / "test-src"
+unmanagedResourceDirectories in Compile := Seq(baseDirectory.value / "resources")
 
 libraryDependencies += "com.sparkjava" % "spark-core" % "2.7.1"
+libraryDependencies += "com.sparkjava" % "spark-template-velocity" % "2.3"
 libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.7.25" % Test
 libraryDependencies += "org.json" % "json" % "20171018"
 libraryDependencies += "com.j256.ormlite" % "ormlite-jdbc" % "5.0"
 libraryDependencies += "org.xerial" % "sqlite-jdbc" % "3.21.0"
 
-resolvers += "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository"
+//resolvers += "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository"
+
+//enablePlugins(JettyPlugin)

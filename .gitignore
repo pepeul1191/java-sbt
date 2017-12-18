@@ -9,3 +9,5 @@ target
 .cache-test
 *.class
 /bin/
+.vscode
+src/resources/public/bower_components

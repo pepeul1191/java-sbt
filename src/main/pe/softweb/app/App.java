@@ -1,49 +1,72 @@
 package pe.softweb.app;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.support.ConnectionSource;
-import org.json.JSONObject;
-import pe.softweb.models.Sistema;
-import pe.softweb.config.Database;
-import java.util.ArrayList;
-import java.util.List;
+import static spark.Spark.*;
+import pe.softweb.config.Constants;
+import spark.*;
+import spark.template.velocity.*;
+import pe.softweb.handlers.*;
+import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 public class App {
-
 	public static void main(String[] args) {
-		String rpta = "";
-		System.out.println("Hola mundo");
-		try {
-            Database conexion = new Database();
-            ConnectionSource connectionSource = conexion.getConnectionSource();
+		exception(Exception.class, (e, req, res) -> e.printStackTrace());
+		staticFiles.location("/public");
+		staticFiles.header("Access-Control-Allow-Origin", "*");
+		staticFiles.header("Access-Control-Request-Method",  "*");
+		staticFiles.header("Access-Control-Allow-Headers",  "*");
+		//staticFiles.expireTime(600);
+		port(2000);
 
-            List<JSONObject> rptaTemp = new ArrayList<JSONObject>();
-            Dao<Sistema, String> sistemaDao = DaoManager.createDao(connectionSource, Sistema.class);
-            QueryBuilder<Sistema, String> queryBuilder = sistemaDao.queryBuilder();
-            PreparedQuery<Sistema> preparedQuery = queryBuilder.prepare();
-            List<Sistema> sistemaList = sistemaDao.query(preparedQuery);
+		options("/*", (request, response) -> {
+			String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
+			if (accessControlRequestHeaders != null) {
+				response.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
+			}
 
-            for (Sistema sistema : sistemaList) {
-                JSONObject obj = new JSONObject();
-                obj.put("id", sistema.getId());
-                obj.put("nombre", sistema.getNombre());
-                obj.put("version", sistema.getVersion());
-                obj.put("repositorio", sistema.getRepositorio());
-                rptaTemp.add(obj);
-            }
+			String accessControlRequestMethod = request.headers("Access-Control-Request-Method");
+			if (accessControlRequestMethod != null) {
+				response.header("Access-Control-Allow-Methods", accessControlRequestMethod);
+			}
 
-            rpta = rptaTemp.toString();
-            System.out.println(rpta);
-        } catch (Exception e) {
-            //e.printStackTrace();
-            JSONObject rptaTry = new JSONObject();
-            rptaTry.put("tipo_mensaje", "error");
-            String[] error = {"Se ha producido un error en  listar los sistemas registrado", e.toString()};
-            rptaTry.put("mensaje", error);
-            System.out.println( rptaTry.toString());
-        }
+			return "OK";
+		});
+
+		before((request, response) -> {
+			response.header("Access-Control-Allow-Origin", "*");
+			response.header("Access-Control-Request-Method",  "*");
+			response.header("Access-Control-Allow-Headers",  "*");
+			response.header("Access-Control-Allow-Credentials", "true");
+			response.header("Server",  "Ubuntu, Jetty");
+			// Note: this may or may not be necessary in your particular application
+			//response.type("application/json");
+		});
+
+        get("/", MainHandler.index);
+        /*
+		get("/login", AppHandler.login);
+		get("/estado_usuario/listar", EstadoUsuarioHandler.listar);
+		get("/item/listar/:subtitulo_id", ItemHandler.listar);
+		get("/modulo/listar/:sistema_id", ModuloHandler.listar);
+		get("/sistema/listar", SistemaHandler.listar);
+        get("/subtitulo/listar/:modulo_id", SubtituloHandler.listar);
+        */
 	}
-
+    
+    public static String renderTemplate(String template, Map model) {
+		model.put("constantes", Constants.getMapita());
+		VelocityTemplateEngine vt = new VelocityTemplateEngine();
+		ModelAndView mv = new ModelAndView(model, template);		
+		String rptaLatin = vt.render(mv);
+		
+		try {
+			byte[] isoBytes = rptaLatin.getBytes("ISO-8859-1");
+			return new String(isoBytes, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "Error en codificación de vista Apache Velocity";
+		}
+		//HelperView hv = new HelperView();
+		//rpta = hv.correcionUTF8(rpta);
+    }
 }
