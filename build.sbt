@@ -13,3 +13,8 @@ lazy val root = (project in file(".")).
 
 javaSource in Compile := baseDirectory.value / "src"
 javaSource in Test := baseDirectory.value / "test-src"
+
+//libraryDependencies += "org.apache.spark" %% "spark-core" % "2.2.0"
+libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.7.25" % Test
+libraryDependencies += "org.json" % "json" % "20171018"
+libraryDependencies += "com.j256.ormlite" % "ormlite-core" % "5.0"
